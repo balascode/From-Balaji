@@ -204,7 +204,7 @@ const createParticlesConfig = useCallback((mode, stage) => {
 // Update particles config based on mode and stage
 useEffect(() => {
   setParticlesConfig(createParticlesConfig(mode, stage));
-}, [mode, stage]);
+}, [mode, stage, createParticlesConfig]);
 
   const renderContent = () => {
     switch(stage) {
