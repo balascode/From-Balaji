@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { 
   Button, 
   Typography, 
@@ -16,7 +16,6 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import WebFont from 'webfontloader';
-import { useCallback } from 'react';
 
 function App() {
   const [stage, setStage] = useState('welcome');
@@ -37,7 +36,7 @@ function App() {
   useEffect(() => {
     WebFont.load({
       google: {
-        families: ['Orbitron:700'] // Keeping Orbitron for "Sorry, Friend"
+        families: ['Orbitron:700']
       }
     });
   }, []);
@@ -56,9 +55,9 @@ function App() {
         },
       },
       typography: {
-        fontFamily: 'Roboto, Arial, sans-serif', // Default for most text
+        fontFamily: 'Roboto, Arial, sans-serif',
         h1: {
-          fontFamily: 'Orbitron, sans-serif', // Best futuristic font for "Sorry, Friend"
+          fontFamily: 'Orbitron, sans-serif',
           fontWeight: 700,
         },
       },
@@ -80,87 +79,87 @@ function App() {
     backdropFilter: 'blur(4px)',
   }));
 
-// Particles Configuration Generator
-const createParticlesConfig = useCallback((mode, stage) => {
-  const isSorryStage = stage === 'sorry';
-  const isQuestionStage = stage === 'questions';
-  return {
-    background: {
-      color: theme.palette.background.default,
-    },
-    fpsLimit: 120,
-    interactivity: {
-      events: {
-        onClick: {
-          enable: !isSorryStage,
-          mode: "push",
-        },
-        onHover: {
-          enable: true,
-          mode: isSorryStage ? "connect" : "repulse",
-        },
-        resize: true,
+  // Particles Configuration Generator
+  const createParticlesConfig = useCallback((mode, stage) => {
+    const isSorryStage = stage === 'sorry';
+    const isQuestionStage = stage === 'questions';
+    return {
+      background: {
+        color: theme.palette.background.default,
       },
-      modes: {
-        push: {
-          quantity: 4,
+      fpsLimit: 120,
+      interactivity: {
+        events: {
+          onClick: {
+            enable: !isSorryStage,
+            mode: "push",
+          },
+          onHover: {
+            enable: true,
+            mode: isSorryStage ? "connect" : "repulse",
+          },
+          resize: true,
         },
-        repulse: {
-          distance: 200,
-          duration: 0.4,
-        },
-        connect: {
-          distance: 80,
-          links: {
-            opacity: 0.5,
+        modes: {
+          push: {
+            quantity: 4,
+          },
+          repulse: {
+            distance: 200,
+            duration: 0.4,
+          },
+          connect: {
+            distance: 80,
+            links: {
+              opacity: 0.5,
+            },
           },
         },
       },
-    },
-    particles: {
-      color: {
-        value: mode === 'dark' ? (isSorryStage ? '#4287f5' : '#ffffff') : (isSorryStage ? '#1565c0' : '#000000'),
-      },
-      links: {
-        color: mode === 'dark' ? (isSorryStage ? '#4287f5' : '#ffffff') : (isSorryStage ? '#1565c0' : '#000000'),
-        distance: 150,
-        enable: true,
-        opacity: isSorryStage ? 0 : 0.3,
-        width: 1,
-      },
-      collisions: {
-        enable: true,
-      },
-      move: {
-        direction: "none",
-        enable: true,
-        outModes: {
-          default: "bounce",
+      particles: {
+        color: {
+          value: mode === 'dark' ? (isSorryStage ? '#4287f5' : '#ffffff') : (isSorryStage ? '#1565c0' : '#000000'),
         },
-        random: isSorryStage,
-        speed: isSorryStage ? 0.5 : 1,
-        straight: false,
-      },
-      number: {
-        density: {
+        links: {
+          color: mode === 'dark' ? (isSorryStage ? '#4287f5' : '#ffffff') : (isSorryStage ? '#1565c0' : '#000000'),
+          distance: 150,
           enable: true,
-          area: 800,
+          opacity: isSorryStage ? 0 : 0.3,
+          width: 1,
         },
-        value: isSorryStage ? 300 : isQuestionStage ? 200 : 80,
+        collisions: {
+          enable: true,
+        },
+        move: {
+          direction: "none",
+          enable: true,
+          outModes: {
+            default: "bounce",
+          },
+          random: isSorryStage,
+          speed: isSorryStage ? 0.5 : 1,
+          straight: false,
+        },
+        number: {
+          density: {
+            enable: true,
+            area: 800,
+          },
+          value: isSorryStage ? 300 : isQuestionStage ? 200 : 80,
+        },
+        opacity: {
+          value: isSorryStage ? 0.5 : 0.3,
+        },
+        shape: {
+          type: "circle",
+        },
+        size: {
+          value: isSorryStage ? { min: 1, max: 3 } : { min: 1, max: 5 },
+        },
       },
-      opacity: {
-        value: isSorryStage ? 0.5 : 0.3,
-      },
-      shape: {
-        type: "circle",
-      },
-      size: {
-        value: isSorryStage ? { min: 1, max: 3 } : { min: 1, max: 5 },
-      },
-    },
-    detectRetina: true,
-  };
-}, [theme]);
+      detectRetina: true,
+    };
+  }, [theme]);
 
   const handleParticlesInit = async (engine) => {
     await loadSlim(engine);
@@ -201,10 +200,10 @@ const createParticlesConfig = useCallback((mode, stage) => {
     setParticlesConfig(createParticlesConfig(mode, 'welcome'));
   };
 
-// Update particles config based on mode and stage
-useEffect(() => {
-  setParticlesConfig(createParticlesConfig(mode, stage));
-}, [mode, stage, createParticlesConfig]);
+  // Updated useEffect (line 207)
+  useEffect(() => {
+    setParticlesConfig(createParticlesConfig(mode, stage));
+  }, [mode, stage, createParticlesConfig]);
 
   const renderContent = () => {
     switch(stage) {
@@ -284,202 +283,201 @@ useEffect(() => {
           </Container>
         );
       
-        case 'sorry':
-          return (
-            <Container 
-              maxWidth="md"
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                minHeight: '100vh',
-                position: 'relative',
-                zIndex: 10
-              }}
-            >
-              <Box sx={{ position: 'relative', textAlign: 'center', width: '100%', height: '100%' }}>
-                <Typography 
-                  variant="h1" 
-                  sx={{ 
-                    color: theme.palette.text.primary, 
-                    fontSize: { xs: '4rem', md: '8rem' },
-                    animation: 'float 3s ease-in-out infinite',
-                    '@keyframes float': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-20px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                    textShadow: mode === 'dark' 
-                      ? '0 0 10px #4287f5, 0 0 20px #4287f5, 0 0 30px #4287f5' 
-                      : '0 0 10px #1565c0, 0 0 20px #1565c0, 0 0 30px #1565c0',
-                    position: 'relative',
-                    zIndex: 20,
-                  }}
-                >
-                  Sorry, Nanna
-                </Typography>
-                {/* Spacious, Floating Crying Emojis */}
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: '2%', 
-                    left: '2%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 4s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: '5%', 
-                    right: '5%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 4.2s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    bottom: '5%', 
-                    left: '10%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 4.4s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    bottom: '10%', 
-                    right: '10%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 4.6s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: '20%', 
-                    left: '20%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 4.8s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: '25%', 
-                    right: '25%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 5s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    bottom: '20%', 
-                    left: '25%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 5.2s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    bottom: '25%', 
-                    right: '20%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 5.4s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: '40%', 
-                    left: '5%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 5.6s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                <Typography 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: '45%', 
-                    right: '5%', 
-                    fontSize: { xs: '2rem', md: '4rem' }, 
-                    zIndex: 15,
-                    animation: 'floatEmoji 5.8s ease-in-out infinite',
-                    '@keyframes floatEmoji': {
-                      '0%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-15px)' },
-                      '100%': { transform: 'translateY(0px)' },
-                    },
-                  }}
-                >😢</Typography>
-                {/* Back Button */}
-                <IconButton 
-                  onClick={handleBack} 
-                  color="inherit"
-                  sx={{ position: 'absolute', top: -60, right: 60, zIndex: 20 }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              </Box>
-            </Container>
-          );
+      case 'sorry':
+        return (
+          <Container 
+            maxWidth="md"
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              minHeight: '100vh',
+              position: 'relative',
+              zIndex: 10
+            }}
+          >
+            <Box sx={{ position: 'relative', textAlign: 'center', width: '100%', height: '100%' }}>
+              <Typography 
+                variant="h1" 
+                sx={{ 
+                  color: theme.palette.text.primary, 
+                  fontSize: { xs: '4rem', md: '8rem' },
+                  animation: 'float 3s ease-in-out infinite',
+                  '@keyframes float': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-20px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                  textShadow: mode === 'dark' 
+                    ? '0 0 10px #4287f5, 0 0 20px #4287f5, 0 0 30px #4287f5' 
+                    : '0 0 10px #1565c0, 0 0 20px #1565c0, 0 0 30px #1565c0',
+                  position: 'relative',
+                  zIndex: 20,
+                }}
+              >
+                Sorry, Nanna
+              </Typography>
+              {/* Spacious, Floating Crying Emojis */}
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '2%', 
+                  left: '2%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 4s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '5%', 
+                  right: '5%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 4.2s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  bottom: '5%', 
+                  left: '10%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 4.4s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  bottom: '10%', 
+                  right: '10%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 4.6s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '20%', 
+                  left: '20%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 4.8s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '25%', 
+                  right: '25%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 5s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  bottom: '20%', 
+                  left: '25%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 5.2s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  bottom: '25%', 
+                  right: '20%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 5.4s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '40%', 
+                  left: '5%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 5.6s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <Typography 
+                sx={{ 
+                  position: 'absolute', 
+                  top: '45%', 
+                  right: '5%', 
+                  fontSize: { xs: '2rem', md: '4rem' }, 
+                  zIndex: 15,
+                  animation: 'floatEmoji 5.8s ease-in-out infinite',
+                  '@keyframes floatEmoji': {
+                    '0%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-15px)' },
+                    '100%': { transform: 'translateY(0px)' },
+                  },
+                }}
+              >😢</Typography>
+              <IconButton 
+                onClick={handleBack} 
+                color="inherit"
+                sx={{ position: 'absolute', top: -60, right: 60, zIndex: 20 }}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+            </Box>
+          </Container>
+        );
       
       case 'final':
         return (
