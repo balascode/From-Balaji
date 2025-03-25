@@ -16,11 +16,12 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import WebFont from 'webfontloader';
+import { useCallback } from 'react';
 
 function App() {
   const [stage, setStage] = useState('welcome');
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [mode, setMode] = useState('dark');
+  const [mode, setMode] = useState('dark'); 
   const [particlesConfig, setParticlesConfig] = useState(null);
   const particlesRef = useRef(null);
 
@@ -79,9 +80,8 @@ function App() {
     backdropFilter: 'blur(4px)',
   }));
 
-  // Particles Configuration Generator
 // Particles Configuration Generator
-const createParticlesConfig = (mode, stage) => {
+const createParticlesConfig = useCallback((mode, stage) => {
   const isSorryStage = stage === 'sorry';
   const isQuestionStage = stage === 'questions';
   return {
@@ -146,7 +146,7 @@ const createParticlesConfig = (mode, stage) => {
           enable: true,
           area: 800,
         },
-        value: isSorryStage ? 300 : isQuestionStage ? 200 : 80, // 200 particles for questions
+        value: isSorryStage ? 300 : isQuestionStage ? 200 : 80,
       },
       opacity: {
         value: isSorryStage ? 0.5 : 0.3,
@@ -160,7 +160,7 @@ const createParticlesConfig = (mode, stage) => {
     },
     detectRetina: true,
   };
-};
+}, [theme]);
 
   const handleParticlesInit = async (engine) => {
     await loadSlim(engine);
